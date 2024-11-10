@@ -3,40 +3,37 @@
 import requests
 import pandas as pd
 
-api_key = 'dv4p5Wt3NImiYihzPHSF0Dz1CiDb1uok'
+def get_weathergov_hourly_forecast(lat, log):
 
-city_name = ''
+    location = ','.join(str(x) for x in [lat,log])
 
-url = f'https://api.tomorrow.io/v4/weather/forecast?&apikey={api_key}'
+    api_key = 'dv4p5Wt3NImiYihzPHSF0Dz1CiDb1uok'
 
-hourly_cols = ['time','cloudCover', 'humidity', 'precipitationProbability', 'temperature', 'temperatureApparent', 'windDirection', 'windGust', 'windSpeed']
-daily_cols = ['time','cloudCoverAvg', 'humidityAvg', 'precipitationProbabilityAvg', 'temperatureAvg', 'temperatureApparentAvg', 'windDirectionAvg', 'windGustAvg', 'windSpeedAvg']
-# params = {'location':'42.3478,-71.0466', 'timesteps':['1d', '1h']}
-params = {'location':'42.3478,-71.0466', 'timesteps':['1d', '1h']}
-# 
-response = requests.get(url, params=params)
+    city_name = ''
 
-data = response.json()
-# print(data)
+    url = f'https://api.tomorrow.io/v4/weather/forecast?&apikey={api_key}'
 
-# hourly_data = response.timelines
-daily_data = data['timelines']['daily']
-hourly_data = data['timelines']['hourly']
+    hourly_cols = ['time','cloudCover', 'humidity', 'precipitationProbability', 'temperature', 'temperatureApparent', 'windDirection', 'windGust', 'windSpeed']
 
-def normalize_df(df, cols):
-    values_df = pd.json_normalize(df['values'])
-    df = df.drop(columns=['values']).join(values_df)
-    return df[cols]
+    # params = {'location':'42.3478,-71.0466', 'timesteps':['1d', '1h']}
+    params = {'location':location, 'timesteps':['1d', '1h']}
 
-df_daily = pd.DataFrame(daily_data)
-df_daily = normalize_df(df_daily, daily_cols)
+    response = requests.get(url, params=params)
 
-df_hourly = pd.DataFrame(hourly_data)
-df_hourly = normalize_df(df_hourly, hourly_cols)
+    data = response.json()
 
-print(df_daily.head())
-print(df_hourly.head())
-# df_daily.to_csv('./data/daily_data_sample.csv')
-# df2 = pd.DataFrame(hourly_data)
-# print(dftmp.head())
+    hourly_data = data['timelines']['hourly']
+
+    def normalize_df(df, cols):
+        values_df = pd.json_normalize(df['values'])
+        df = df.drop(columns=['values']).join(values_df)
+        return df[cols]
+
+    df_hourly = pd.DataFrame(hourly_data)
+    df_hourly = normalize_df(df_hourly, hourly_cols)
+    return df_hourly
+
+if __name__ == "__main__":
+    df_forecast = get_weathergov_hourly_forecast(42.34, -71.04)
+    print(df_forecast.head(2))
 
