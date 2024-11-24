@@ -1,76 +1,84 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.express as px
+from time import sleep  # Simulate delay for demonstration purposes
+from get_forecast import get_hourly_forecast
 
-# Placeholder function to simulate fetching weather data (to be replaced by actual API call)
-def fetch_weather_data(city):
-    # This function should return a dictionary containing the weather data.
-    # Example format:
-    # {
-    #     "hourly": {"time": [...], "temperature": [...], "precipitation": [...], "wind_speed": [...]},
-    #     "daily": {"date": [...], "temperature": [...], "precipitation": [...], "wind_speed": [...]}
-    # }
-    return {
-        "hourly": {
-            "time": ["00:00", "01:00", "02:00", "03:00"],
-            "temperature": [15, 14, 13, 13],
-            "precipitation": [0, 0.1, 0.3, 0.0],
-            "wind_speed": [5, 4, 6, 5]
-        },
-        "daily": {
-            "date": ["2023-10-01", "2023-10-02", "2023-10-03", "2023-10-04"],
-            "temperature": [16, 17, 15, 14],
-            "precipitation": [0.5, 0.0, 0.2, 0.1],
-            "wind_speed": [4, 5, 6, 5]
-        }
-    }
+# Placeholder function to simulate fetching weather data (to be replaced with real implementation)
+def fetch_weather_data(city, country):
+    return get_hourly_forecast(city, country)
+
+# Load cities data from CSV file
+@st.cache_data
+def load_city_data(file_path):
+    return pd.read_csv(file_path)
 
 # Streamlit app
 def main():
-    st.title("Weather Forecast App")
-    st.write("Get hourly and daily weather forecasts for your city.")
+    st.title("Weather Forecast App 🌦️")
+    st.markdown("Get hourly weather forecasts for your city, sourced from multiple data providers.")
 
-    # Input field for city
-    city = st.text_input("Enter the city name", "")
+    # Sidebar for city selection
+    st.sidebar.header("Location Selection")
+    file_path = "data/worldcities.csv"
+    cities_data = load_city_data(file_path)
+    
+    country = st.sidebar.selectbox("Select Country", sorted(cities_data["country"].unique()))
+    city = None
+    if country:
+        filtered_cities = cities_data[cities_data["country"] == country]["city"].unique()
+        city = st.sidebar.selectbox("Select City", sorted(filtered_cities))
 
-    if city:
-        st.write(f"Fetching weather data for: {city}")
+    # Main content area
+    if city and country:
+        st.write(f"### Weather Data for {city}, {country}")
 
-        # Fetch weather data
-        data = fetch_weather_data(city)
+        # Fetch weather data with a loading spinner
+        with st.spinner("Fetching weather data..."):
+            hourly_data = fetch_weather_data(city, country)
 
-        if data:
-            # Hourly forecast
-            st.subheader("Hourly Forecast")
-            hourly_data = pd.DataFrame(data["hourly"])
-            st.write(hourly_data)
+        if not hourly_data.empty:
+            # Convert time column to datetime
+            hourly_data["time"] = pd.to_datetime(hourly_data["time"])
 
-            # Plotting hourly data
-            fig, ax = plt.subplots()
-            ax.plot(hourly_data["time"], hourly_data["temperature"], label="Temperature (°C)")
-            ax.plot(hourly_data["time"], hourly_data["precipitation"], label="Precipitation (mm)")
-            ax.plot(hourly_data["time"], hourly_data["wind_speed"], label="Wind Speed (km/h)")
-            ax.set_xlabel("Time")
-            ax.set_title("Hourly Forecast")
-            ax.legend()
-            st.pyplot(fig)
+            # Extract the next hour's forecast
+            next_hour_data = hourly_data.iloc[1] if len(hourly_data) > 1 else None
 
-            # Daily forecast
-            st.subheader("Daily Forecast")
-            daily_data = pd.DataFrame(data["daily"])
-            st.write(daily_data)
+            # Display cards for next hour's forecast
+            st.subheader("Next Hour's Forecast")
+            with st.container():
+                col1, col2, col3 = st.columns(3)
+                col1.metric("Temperature (°C)", f"{next_hour_data['temperature_c']:.2f}" if next_hour_data is not None else "N/A")
+                col2.metric("Feels Like (°C)", f"{next_hour_data['feels_like']:.2f}" if next_hour_data is not None else "N/A")
+                col3.metric("Precipitation (%)", f"{next_hour_data['precipitation_probability']}%" if next_hour_data is not None else "N/A")
 
-            # Plotting daily data
-            fig, ax = plt.subplots()
-            ax.plot(daily_data["date"], daily_data["temperature"], label="Temperature (°C)")
-            ax.plot(daily_data["date"], daily_data["precipitation"], label="Precipitation (mm)")
-            ax.plot(daily_data["date"], daily_data["wind_speed"], label="Wind Speed (km/h)")
-            ax.set_xlabel("Date")
-            ax.set_title("Daily Forecast")
-            ax.legend()
-            st.pyplot(fig)
+            with st.container():
+                col1, col2, col3 = st.columns(3)
+                col1.metric("Wind Speed (km/h)", f"{next_hour_data['wind_speed']:.2f}" if next_hour_data is not None else "N/A")
+                col2.metric("Wind Direction (°)", f"{next_hour_data['wind_direction']}" if next_hour_data is not None else "N/A")
+                col3.metric("Relative Humidity (%)", f"{next_hour_data['relative_humidity']}%" if next_hour_data is not None else "N/A")
+
+            # Select metric to display
+            st.subheader("Select Metric to Display")
+            metrics = ["temperature_c", "feels_like", "relative_humidity",
+                       "precipitation_probability", "wind_speed", "wind_direction"]
+            selected_metric = st.selectbox("Metric", metrics, index=0)
+
+            # Plot hourly data
+            fig_hourly = px.line(hourly_data, x="time", y=selected_metric, color="source",
+                                 title=f"Hourly {selected_metric.replace('_', ' ').capitalize()} Forecast",
+                                 labels={selected_metric: selected_metric.replace('_', ' ').capitalize(), "time": "Time"})
+            st.plotly_chart(fig_hourly, use_container_width=True)
         else:
-            st.error("Could not fetch weather data. Please try again later.")
+            st.error("No weather data available for the selected location.")
+    else:
+        st.info("Please select a country and city from the sidebar.")
+
+    st.markdown("---")
+    st.markdown(
+            "Created by **Spyros Armaos** for educational purposes. 🌍\n\n"
+            "This app demonstrates the use of how multiple weather forecasting services can be combined in a single application to get better forecasts."
+        )
 
 if __name__ == "__main__":
     main()

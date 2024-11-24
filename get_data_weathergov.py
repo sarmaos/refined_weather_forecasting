@@ -2,9 +2,9 @@
 
 import requests
 import pandas as pd
-from utils import normalize_df
+from utils import normalize_df, get_current_ts
 
-def get_weathergov_hourly_forecast(lat, log):
+def get_weathergov_hourly_forecast(lat, lng):
        final_cols = ['startTime', 'endTime', 'isDaytime', 'temperature',
               'temperatureUnit', 'probabilityOfPrecipitation',
               'dewpoint', 'relativeHumidity', 'windSpeed', 'windDirection']
@@ -15,7 +15,7 @@ def get_weathergov_hourly_forecast(lat, log):
        query = '42.3478, -71.0466'
        # latitude = '42.3478'
        # longitude = '-71.0466'
-       url = f'''https://api.weather.gov/points/{lat},{log}'''
+       url = f'''https://api.weather.gov/points/{lat},{lng}'''
 
        response = requests.get(url)
        data = response.json()
@@ -35,5 +35,5 @@ def get_weathergov_hourly_forecast(lat, log):
        return df_hourly
 
 if __name__ == "__main__":
-       df_forecast = get_weathergov_hourly_forecast(42.34, -71.04)
-       print(df_forecast.head(2))
+       df_forecast = get_weathergov_hourly_forecast(34.1141, -118.4068)
+       df_forecast.to_csv(f'./data/exports/{__file__.split('/')[-1].split('_')[2].split('.')[0]}_export_{get_current_ts()}.csv')

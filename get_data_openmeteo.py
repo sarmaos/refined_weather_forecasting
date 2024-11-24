@@ -4,8 +4,9 @@ import openmeteo_requests
 import requests_cache
 import pandas as pd
 from retry_requests import retry
+from utils import get_current_ts
 
-def get_openmeteo_hourly_forecast(lat, log):
+def get_openmeteo_hourly_forecast(lat: float, lng:float):
 	cache_session = requests_cache.CachedSession('.cache', expire_after = 3600)
 	retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
 	openmeteo = openmeteo_requests.Client(session = retry_session)
@@ -14,7 +15,7 @@ def get_openmeteo_hourly_forecast(lat, log):
 		# "latitude": 52.52,
 		# "longitude": 13.41,
 		"latitude": lat,
-		"longitude": log,
+		"longitude": lng,
 		"hourly": ["temperature_2m", "relative_humidity_2m", "apparent_temperature", "precipitation_probability", "cloud_cover", "wind_speed_120m", "wind_direction_120m", "wind_gusts_10m", "temperature_120m"]
 	}
 	responses = openmeteo.weather_api(url, params=params)
@@ -52,5 +53,5 @@ def get_openmeteo_hourly_forecast(lat, log):
 
 
 if __name__ == "__main__":
-	df_forecast = get_openmeteo_hourly_forecast(52.52, 13.41)
-	print(df_forecast.head(2))
+	df_forecast = get_openmeteo_hourly_forecast(34.1141, -118.4068)
+	df_forecast.to_csv(f'./data/exports/{__file__.split('/')[-1].split('_')[2].split('.')[0]}_export_{get_current_ts()}.csv')
