@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from time import sleep  # Simulate delay for demonstration purposes
 from main import get_hourly_forecast
 
 # Placeholder function to simulate fetching weather data (to be replaced with real implementation)
