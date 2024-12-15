@@ -68,4 +68,5 @@ def rename_and_select_columns(df: pd.DataFrame, source: str) -> pd.DataFrame:
                        'wind_direction', 'wind_speed']
     df_renamed = df_renamed[desired_columns]
     df_renamed = apply_dtypes(df_renamed)
+    df_renamed['source'] = source
     return df_renamed

@@ -2,11 +2,11 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from time import sleep  # Simulate delay for demonstration purposes
-from get_forecast import get_hourly_forecast
+from main import get_hourly_forecast
 
 # Placeholder function to simulate fetching weather data (to be replaced with real implementation)
-def fetch_weather_data(city, country):
-    return get_hourly_forecast(city, country)
+def fetch_weather_data(city, country, strategy):
+    return get_hourly_forecast(city, country, strategy)
 
 # Load cities data from CSV file
 @st.cache_data
@@ -18,24 +18,36 @@ def main():
     st.title("Weather Forecast App 🌦️")
     st.markdown("Get hourly weather forecasts for your city, sourced from multiple data providers.")
 
-    # Sidebar for city selection
-    st.sidebar.header("Location Selection")
+    # Sidebar for configuration
+    st.sidebar.header("Configuration")
     file_path = "data/worldcities.csv"
     cities_data = load_city_data(file_path)
     
-    country = st.sidebar.selectbox("Select Country", sorted(cities_data["country"].unique()))
+    # Dropdown for ensemble strategy selection
+    ensemble_strategies = ["", "simple_average", "weighted_average", "median"]
+    selected_strategy = st.sidebar.selectbox(
+        "Select Ensemble Strategy", ensemble_strategies, index=0, format_func=lambda x: "Select..." if x == "" else x
+    )
+    
+    # Dropdowns for country and city selection, starting empty
+    countries = sorted(cities_data["country"].unique())
+    country = st.sidebar.selectbox(
+        "Select Country", [""] + countries, index=0, format_func=lambda x: "Select..." if x == "" else x
+    )
     city = None
-    if country:
-        filtered_cities = cities_data[cities_data["country"] == country]["city"].unique()
-        city = st.sidebar.selectbox("Select City", sorted(filtered_cities))
+    if country and country != "":
+        filtered_cities = sorted(cities_data[cities_data["country"] == country]["city"].unique())
+        city = st.sidebar.selectbox(
+            "Select City", [""] + filtered_cities, index=0, format_func=lambda x: "Select..." if x == "" else x
+        )
 
     # Main content area
-    if city and country:
-        st.write(f"### Weather Data for {city}, {country}")
+    if city and country and selected_strategy and city != "" and country != "":
+        st.write(f"### Weather Data for {city}, {country} (Strategy: {selected_strategy})")
 
         # Fetch weather data with a loading spinner
         with st.spinner("Fetching weather data..."):
-            hourly_data = fetch_weather_data(city, country)
+            hourly_data = fetch_weather_data(city, country, selected_strategy)
 
         if not hourly_data.empty:
             # Convert time column to datetime
@@ -72,7 +84,7 @@ def main():
         else:
             st.error("No weather data available for the selected location.")
     else:
-        st.info("Please select a country and city from the sidebar.")
+        st.info("Please select a country, city, and ensemble strategy from the sidebar.")
 
     st.markdown("---")
     st.markdown(
