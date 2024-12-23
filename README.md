@@ -108,5 +108,4 @@ This project is open-source and available under the [MIT License](https://openso
 
 ## **Contact**
 For support or collaboration, please contact:
-- **Spyros Armaos**
 - Email: [sarmaos@athtech.gr]
