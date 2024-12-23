@@ -91,7 +91,8 @@ This application uses multiple public weather APIs. You will need to configure t
 ---
 
 ## **Screenshots**
-*(Optional: Add screenshots or GIFs showcasing your app UI.)*
+![Screenshot 2024-12-23 at 2 20 00 PM](https://github.com/user-attachments/assets/a9ae8085-717f-4851-9c12-3749f56c1a10)
+
 
 ---
 
