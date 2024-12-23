@@ -22,7 +22,7 @@ Ensure you have the following installed:
 ### **Installation**
 1. Clone this repository:
    ```bash
-   git clone [<your-repo-url>](https://github.com/sarmaos/refined_weather_forecasting)
+   git clone https://github.com/sarmaos/refined_weather_forecasting
    cd refined_weather_forecasting
    ```
 2. Install dependencies:
