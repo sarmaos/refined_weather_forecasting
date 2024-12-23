@@ -1,5 +1,5 @@
 .venv
 local_data
 .cache*
-__pychache__
+__pycache__
 *.xlsx

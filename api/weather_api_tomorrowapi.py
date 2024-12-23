@@ -33,7 +33,6 @@ class TomorrowapiAPI(WeatherAPI):
             df = df.drop(columns=['values']).join(values_df)
             return df[cols]
         df = normalize_df(df, hourly_cols)
-        df['relative_humidity'] = 0
         df = rename_and_select_columns(df, self.source_name())
         return df
     

@@ -4,7 +4,7 @@ column_mapping = {
     'tomorrowapi': {
         'time': 'time',
         'temperatureApparent': 'feels_like',
-        'relative_humidity': 'relative_humidity',
+        'humidity': 'relative_humidity',
         'precipitationProbability': 'precipitation_probability',
         'temperature': 'temperature_c',
         'windDirection': 'wind_direction',
