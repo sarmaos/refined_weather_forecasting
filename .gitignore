@@ -3,3 +3,4 @@ local_data
 .cache*
 __pycache__
 *.xlsx
+.env

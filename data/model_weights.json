@@ -1,1 +1,7 @@
-{"weight":{"accuweather":0.2909370235,"openmeteo":0.6113771844,"tomorrowapi":0.0976857921}}
+{
+  "weight": {
+    "accuweather": 0.2909370235,
+    "openmeteo": 0.6113771844,
+    "tomorrowapi": 0.0976857921
+  }
+}
