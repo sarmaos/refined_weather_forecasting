@@ -22,8 +22,8 @@ Ensure you have the following installed:
 ### **Installation**
 1. Clone this repository:
    ```bash
-   git clone <your-repo-url>
-   cd <your-repo-folder>
+   git clone https://github.com/sarmaos/refined_weather_forecasting
+   cd refined_weather_forecasting
    ```
 2. Install dependencies:
    ```bash
@@ -91,7 +91,8 @@ This application uses multiple public weather APIs. You will need to configure t
 ---
 
 ## **Screenshots**
-*(Optional: Add screenshots or GIFs showcasing your app UI.)*
+![Screenshot 2024-12-23 at 2 20 00 PM](https://github.com/user-attachments/assets/a9ae8085-717f-4851-9c12-3749f56c1a10)
+
 
 ---
 
@@ -107,5 +108,4 @@ This project is open-source and available under the [MIT License](https://openso
 
 ## **Contact**
 For support or collaboration, please contact:
-- **Spyros Armaos**
-- Email: [YourEmail@example.com]
+- Email: [sarmaos@athtech.gr]
