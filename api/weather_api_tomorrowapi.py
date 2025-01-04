@@ -36,11 +36,25 @@ class TomorrowapiAPI(WeatherAPI):
         df = rename_and_select_columns(df, self.source_name())
         return df
     
-    def get_data(self, lat: float, lng: float):
-        df = self.get_raw_data(lat, lng)
-        normalized_df = self.normalize_data(df)
-        return normalized_df
-    
+    def get_historical_data(self, lat: float, lng: float) -> pd.DataFrame:
+        location = ','.join(str(x) for x in [lat,lng])
+        params = {
+            'location':location,
+            'fields':['temperature'],
+            'timesteps':['1h'], 
+            'startTime': '2024-12-23T12:00:00Z',
+            'endTime': '2024-12-24T01:00:00Z',
+            'units': 'metric'
+            }
+        url = f'https://api.tomorrow.io/v4/historical?&apikey={self.api_key}'
+        response = requests.get(url, params=params)
+        if response.status_code == 200:
+            data = response.json()
+            hourly_data = data['timelines']['hourly']
+            df = pd.DataFrame(hourly_data)
+            normalized_df = self.normalize_data(df)
+            return normalized_df
+        
 if __name__ == '__main__':
     lat, lng = 34.1141, -118.4068
     tomorrowapi_api = TomorrowapiAPI(os.getenv('TOMORROWAPI_APIKEY'))

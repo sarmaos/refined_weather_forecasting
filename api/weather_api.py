@@ -20,10 +20,12 @@ class WeatherAPI(ABC):
     def get_data(self, lat: float, lng: float) -> pd.DataFrame:
         """Fetch and normalize weather data."""
         raw_data = self.get_raw_data(lat, lng)
-        return self.normalize_data(raw_data)
+        normalized_data = self.normalize_data(raw_data)
+        filtered_data = self.filter_dataframe_with_next_12_hours(normalized_data)
+        return filtered_data
     
-    def filter_dataframe_with_next_12_hours(df):
-        start_time = pd.Timestamp.now()
+    def filter_dataframe_with_next_12_hours(self, df):
+        start_time = pd.Timestamp.now(tz="UTC")
         end_time = start_time + pd.Timedelta(hours=12)
         filtered_df = df[(df['time'] >= start_time) & (df['time'] <= end_time)]
         return filtered_df

@@ -5,7 +5,8 @@ import streamlit_authenticator as stauth
 import yaml
 from yaml.loader import SafeLoader
 from main import get_hourly_forecast
-
+import plotly.express as px
+import plotly.graph_objects as go
 # Load cities data from CSV file
 @st.cache_data
 def load_city_data(file_path):
@@ -50,14 +51,29 @@ def display_next_hour_metrics(next_hour_data):
 
 # Plot hourly data
 def plot_hourly_data(hourly_data, selected_metric):
+    # Create the base figure
     fig = px.line(
-        hourly_data, x="time", y=selected_metric, color="source",
+        hourly_data,
+        x="time",
+        y=selected_metric,
+        color="source",
         title=f"Hourly {selected_metric.replace('_', ' ').capitalize()} Forecast",
         labels={
             selected_metric: selected_metric.replace('_', ' ').capitalize(),
             "time": "Time"
         }
     )
+
+    # Update traces to style 'ensemble' differently
+    for trace in fig.data:
+        if trace.name == "ensemble":
+            trace.line.width = 4  # Make 'ensemble' line bold
+            trace.opacity = 1.0  # Full visibility
+        else:
+            trace.line.width = 2  # Thinner lines for other sources
+            trace.opacity = 0.5  # Make them more transparent
+
+    # Display the updated figure
     st.plotly_chart(fig, use_container_width=True)
 
 # Main app
@@ -71,7 +87,7 @@ def main():
     cities_data = load_city_data(file_path)
 
     # Ensemble strategy selection
-    ensemble_strategies = ["", "simple_average", "weighted_average", "median"]
+    ensemble_strategies = ["", "simple_average", "weighted_average"]
     selected_strategy = st.sidebar.selectbox(
         "Select Ensemble Strategy", ensemble_strategies, index=0,
         format_func=lambda x: "Select..." if x == "" else x
@@ -103,6 +119,7 @@ def main():
             hourly_data["time"] = pd.to_datetime(hourly_data["time"])
 
             # Next hour's data
+            next_hour_data = hourly_data[hourly_data['source']=='ensemble']
             next_hour_data = hourly_data.iloc[1] if len(hourly_data) > 1 else None
             display_next_hour_metrics(next_hour_data)
 

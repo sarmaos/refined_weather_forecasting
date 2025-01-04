@@ -24,6 +24,6 @@ def get_hourly_forecast(city, country, ensemble_strategy = "simple_average"):
 
 
 if __name__ == "__main__":
-    strategy = 'simple_average'
+    strategy = 'linear_regression'
     data = get_hourly_forecast('Athens','Greece',strategy)
     data.to_csv(f'./local_data/exports/ENSEMBLE_{strategy}_{get_current_ts()}.csv')

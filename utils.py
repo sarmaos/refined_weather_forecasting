@@ -1,5 +1,6 @@
 import pandas as pd
 import datetime
+import json
 
 def get_current_ts():
     return str(datetime.datetime.now()).replace(' ','').replace(':','').replace('.','')
@@ -21,3 +22,9 @@ def get_coordinates(city: str, country: str):
 
 def normalize_city_param(source):
     pass
+
+def read_model_weights(file_path):
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+    return data
+
