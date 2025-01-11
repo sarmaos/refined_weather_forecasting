@@ -1,0 +1,5 @@
+time,temperature_c,feels_like,precipitation_probability,wind_speed,wind_direction,relative_humidity,source
+2025-01-01 00:00:00,5.0,3.0,20,15,90,80,ensemble
+2025-01-01 01:00:00,6.0,4.0,30,16,100,82,openmeteo
+2025-01-01 02:00:00,7.0,5.0,40,17,110,85,accuweather
+2025-01-01 03:00:00,8.0,6.0,50,18,120,87,tomorrowio

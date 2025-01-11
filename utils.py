@@ -20,8 +20,6 @@ def get_coordinates(city: str, country: str):
         print(f'Coordinates {lat}/{lng} for city {city} found.')
     return lat, lng
 
-def normalize_city_param(source):
-    pass
 
 def read_model_weights(file_path):
     with open(file_path, 'r') as file:
