@@ -1,3 +1,4 @@
+[![Run Tests](https://github.com/sarmaos/refined_weather_forecasting/actions/workflows/test.yml/badge.svg)](https://github.com/sarmaos/refined_weather_forecasting/actions/workflows/test.yml)
 
 # **Weather Forecast Application**
 
