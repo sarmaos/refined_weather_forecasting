@@ -33,3 +33,5 @@ jobs:
     - name: Run tests
       run: |
         python -m tests.test_app
+        python -m tests.test_weather_api
+        python -m tests.test_utils
