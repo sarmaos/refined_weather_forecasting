@@ -1,8 +1,6 @@
 import unittest
 from unittest.mock import patch, mock_open
 import pandas as pd
-import json
-import datetime
 from utils import get_current_ts, normalize_df, get_coordinates, read_model_weights
 
 
