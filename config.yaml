@@ -1,39 +1,17 @@
 cookie:
-  expiry_days: 30
-  key: some_signature_key # Must be a string
+  expiry_days: 1
+  key: some_signature_key
   name: some_cookie_name
 credentials:
   usernames:
-    jsmith:
-      email: jsmith@gmail.com
+    sarmaos:
+      email: spirosarmaos@gmail.com
       failed_login_attempts: 0
-      first_name: John
-      last_name: Smith
-      logged_in: False
-      password: abc
-      roles: # Optional
-      - admin
-      - editor
-      - viewer
-    rbriggs:
-      email: rbriggs@gmail.com
-      failed_login_attempts: 0
-      first_name: Rebecca
-      last_name: Briggs
-      logged_in: False
-      password: def
-      roles: # Optional
-      - viewer
-oauth2: # Optional
-  google: # Follow instructions: https://developers.google.com/identity/protocols/oauth2
-    client_id: # To be filled
-    client_secret: # To be filled
-    redirect_uri: # URL to redirect to after OAuth2 authentication
-  microsoft: # Follow instructions: https://learn.microsoft.com/en-us/graph/auth-register-app-v2
-    client_id: # To be filled
-    client_secret: # To be filled
-    redirect_uri: # URL to redirect to after OAuth2 authentication
-    tenant_id: # To be filled
-pre-authorized: # Optional
-  emails:
-  - melsby@gmail.com
+      first_name: Spyros
+      last_name: Armaos
+      logged_in: true
+      password: $2b$12$/CWgIGEjT8OzrVzQ8cYFNuxqyb7WzCn/Mz2j5WkNPzP9uA2xctwnm
+      password_hint: dissertation
+      roles: null
+pre-authorized:
+  emails: null

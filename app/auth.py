@@ -11,10 +11,13 @@ def setup_authenticator(config_path):
         config['credentials'],
         config['cookie']['name'],
         config['cookie']['key'],
-        config['cookie']['expiry_days']
+        config['cookie']['expiry_days'],
+        auto_hash=True
     )
     try:
         authenticator.login()
+        with open(config_path, 'w') as file:
+            yaml.dump(config, file, default_flow_style=False)
     except Exception as e:
         st.error(e)
 

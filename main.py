@@ -7,7 +7,12 @@ from app.plots import (
     plot_hourly_data,
     plot_precipitation_bar,
     plot_average_wind_speed_gauge,
+    plot_data_table,
 )
+
+@st.cache_data
+def load_hourly_data(city, country, selected_strategy):
+    return fetch_weather_data(city, country, selected_strategy)
 
 def main():
     st.title("Weather Forecast App 🌦️")
@@ -23,10 +28,11 @@ def main():
     selected_strategy = st.sidebar.selectbox(
         "Select Ensemble Strategy", 
         ensemble_strategies, 
-        index=0,
+        index=2,  # Default to "weighted_average"
         format_func=lambda x: "Select..." if x == "" else x, 
         key='select_strategy',
     )
+
     # Country and city selection
     countries = sorted(cities_data["country"].unique())
     country = st.sidebar.selectbox(
@@ -47,18 +53,18 @@ def main():
 
         # Fetch weather data
         with st.spinner("Fetching weather data..."):
-            hourly_data = fetch_weather_data(city, country, selected_strategy)
+            hourly_data = load_hourly_data(city, country, selected_strategy)
 
         if not hourly_data.empty:
             hourly_data["time"] = pd.to_datetime(hourly_data["time"])
 
-            # Wider columns for better spacing
+            ensemble_hourly = hourly_data[hourly_data.source=='ensemble']
             
 
-            selected_hour = st.slider(
-                    "Select Forecast Hour", 0, len(hourly_data) - 1, 1, format="Hour %d"
-                )
-            selected_data = hourly_data.iloc[selected_hour]
+            # selected_hour = st.slider(
+            #         "Select Forecast Hour", 0, len(ensemble_hourly) - 1, 1, format="Hour %d"
+            #     )
+            selected_data = ensemble_hourly.iloc[1]
 
             # Display metrics for selected hour
             display_hour_metrics(selected_data)
@@ -73,10 +79,12 @@ def main():
             col1, col2 = st.columns([2, 1])
 
             with col1:
-                plot_precipitation_bar(hourly_data)
+                plot_precipitation_bar(ensemble_hourly)
 
             with col2:
-                plot_average_wind_speed_gauge(hourly_data)
+                plot_average_wind_speed_gauge(ensemble_hourly)
+
+            plot_data_table(hourly_data)
                 
         else:
             st.error("No weather data available for the selected location.")
@@ -92,9 +100,10 @@ if __name__ == "__main__":
 
     if st.session_state.get("authentication_status"):
         authenticator.logout()
-        st.write(f"Welcome *{st.session_state['name']}*")
+        st.write(   f"Welcome *{st.session_state['name']}*")
         main()
     elif st.session_state.get("authentication_status") is False:
         st.error("Username/password is incorrect")
     else:
         st.warning("Please enter your username and password")
+        st.markdown("For acquiring access to the specific application send an email to sarmaos@athtech.gr")

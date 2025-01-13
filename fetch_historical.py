@@ -16,4 +16,4 @@ def main(source):
 
 
 if __name__ == "__main__":
-    main(source = 'tomorrowapi')
+    main(source = 'openmeteo')
